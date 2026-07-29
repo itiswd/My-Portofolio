@@ -1,252 +1,312 @@
 import 'package:flutter/material.dart';
 
+import '../theme/portfolio_theme.dart';
+import '../utils/app_localizations.dart';
+import 'common/section_heading.dart';
+
 class AboutSection extends StatelessWidget {
-  const AboutSection({super.key});
+  const AboutSection({super.key, required this.languageCode});
+
+  final String languageCode;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
+    final localizations = AppLocalizations(languageCode);
+    final isArabic = languageCode == 'ar';
+    final width = MediaQuery.sizeOf(context).width;
+    final compact = width < 900;
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 60,
-        vertical: 80,
+        horizontal: width < 600 ? 20 : 48,
+        vertical: 96,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1320),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionHeading(
+                eyebrow: isArabic ? 'نبذة عني' : 'ABOUT',
+                title: isArabic
+                    ? 'هندسة في التفكير، وبساطة في التنفيذ.'
+                    : 'Engineering thinking. Human-centered execution.',
+                description: localizations.translate('about_description_1'),
+              ),
+              const SizedBox(height: 52),
+              if (compact)
+                Column(
+                  children: [
+                    _StoryCard(
+                      isArabic: isArabic,
+                      localizations: localizations,
+                    ),
+                    const SizedBox(height: 20),
+                    _Journey(localizations: localizations),
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: _StoryCard(
+                        isArabic: isArabic,
+                        localizations: localizations,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      flex: 5,
+                      child: _Journey(localizations: localizations),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryCard extends StatelessWidget {
+  const _StoryCard({
+    required this.isArabic,
+    required this.localizations,
+  });
+
+  final bool isArabic;
+  final AppLocalizations localizations;
+
+  @override
+  Widget build(BuildContext context) {
+    final points = List.generate(
+      4,
+      (index) => localizations.translate('about_point_${index + 1}'),
+    );
+    return PortfolioPanel(
+      padding: const EdgeInsets.all(30),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF121F31), Color(0xFF0B121F)],
       ),
       child: Column(
-        children: [
-          _buildSectionTitle('About Me'),
-          const SizedBox(height: 60),
-          isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: 100,
-          height: 4,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
-            ),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDesktopLayout() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 2,
-          child: _buildAboutContent(),
-        ),
-        const SizedBox(width: 60),
-        Expanded(
-          child: _buildExperienceCards(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMobileLayout() {
-    return Column(
-      children: [
-        _buildAboutContent(),
-        const SizedBox(height: 40),
-        _buildExperienceCards(),
-      ],
-    );
-  }
-
-  Widget _buildAboutContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'I\'m a passionate Flutter developer with expertise in creating '
-          'beautiful, high-performance mobile applications.',
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFFB0B0B0),
-            height: 1.8,
-          ),
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          'With over 3 years of experience in mobile development, I specialize in:',
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFFB0B0B0),
-            height: 1.8,
-          ),
-        ),
-        const SizedBox(height: 20),
-        _buildSkillPoint('Cross-platform mobile development with Flutter'),
-        _buildSkillPoint('State management (Provider, Riverpod, Bloc)'),
-        _buildSkillPoint('RESTful APIs and Firebase integration'),
-        _buildSkillPoint('Clean architecture and SOLID principles'),
-        _buildSkillPoint('UI/UX design implementation'),
-        const SizedBox(height: 30),
-        const Text(
-          'I\'m always eager to learn new technologies and take on challenging projects. '
-          'Let\'s build something amazing together!',
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFFB0B0B0),
-            height: 1.8,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSkillPoint(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: Color(0xFF00B4DB),
-              shape: BoxShape.circle,
+          Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      PortfolioColors.primary,
+                      PortfolioColors.secondary,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: PortfolioColors.background,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  isArabic
+                      ? 'أبني منتجات، مش مجرد شاشات.'
+                      : 'I build products, not just screens.',
+                  style: const TextStyle(
+                    color: PortfolioColors.text,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 26),
+          Text(
+            localizations.translate('about_description_3'),
+            style: const TextStyle(
+              color: PortfolioColors.muted,
+              fontSize: 16,
+              height: 1.75,
             ),
           ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xFFB0B0B0),
-                height: 1.6,
+          const SizedBox(height: 26),
+          for (final point in points)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 6),
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: PortfolioColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: PortfolioColors.primary,
+                      size: 13,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      point,
+                      style: const TextStyle(
+                        color: PortfolioColors.text,
+                        fontSize: 14,
+                        height: 1.55,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildExperienceCards() {
+class _Journey extends StatelessWidget {
+  const _Journey({required this.localizations});
+
+  final AppLocalizations localizations;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildExperienceCard(
-          'Education',
-          'Bachelor in Computer Science',
-          '2018 - 2022',
-          Icons.school,
+        _JourneyItem(
+          icon: Icons.work_outline_rounded,
+          label: localizations.translate('experience'),
+          title: localizations.translate('experience_title'),
+          period: localizations.translate('experience_period'),
+          color: PortfolioColors.primary,
         ),
-        const SizedBox(height: 20),
-        _buildExperienceCard(
-          'Experience',
-          'Flutter Developer',
-          '2021 - Present',
-          Icons.work,
+        const SizedBox(height: 16),
+        _JourneyItem(
+          icon: Icons.school_outlined,
+          label: localizations.translate('education'),
+          title: localizations.translate('education_title'),
+          period: localizations.translate('education_period'),
+          color: PortfolioColors.secondary,
         ),
-        const SizedBox(height: 20),
-        _buildExperienceCard(
-          'Certifications',
-          'Flutter Developer Certified',
-          '2022',
-          Icons.card_membership,
+        const SizedBox(height: 16),
+        _JourneyItem(
+          icon: Icons.workspace_premium_outlined,
+          label: localizations.translate('certifications'),
+          title: localizations.translate('certifications_title'),
+          period: localizations.translate('certifications_period'),
+          color: PortfolioColors.accent,
         ),
       ],
     );
   }
+}
 
-  Widget _buildExperienceCard(
-    String title,
-    String subtitle,
-    String period,
-    IconData icon,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF00B4DB).withOpacity(0.1),
-            const Color(0xFF0083B0).withOpacity(0.05),
+class _JourneyItem extends StatefulWidget {
+  const _JourneyItem({
+    required this.icon,
+    required this.label,
+    required this.title,
+    required this.period,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String title;
+  final String period;
+  final Color color;
+
+  @override
+  State<_JourneyItem> createState() => _JourneyItemState();
+}
+
+class _JourneyItemState extends State<_JourneyItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        transform: Matrix4.translationValues(_hovered ? 7 : 0, 0, 0),
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          color: PortfolioColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _hovered
+                ? widget.color.withValues(alpha: 0.45)
+                : PortfolioColors.border,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: widget.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(widget.icon, color: widget.color),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.label.toUpperCase(),
+                    style: TextStyle(
+                      color: widget.color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    widget.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: PortfolioColors.text,
+                      fontSize: 16,
+                      height: 1.35,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    widget.period,
+                    style: const TextStyle(
+                      color: PortfolioColors.muted,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: const Color(0xFF00B4DB).withOpacity(0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF00B4DB),
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  period,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFB0B0B0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

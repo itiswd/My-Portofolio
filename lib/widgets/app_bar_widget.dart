@@ -1,16 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
+import '../theme/portfolio_theme.dart';
 import '../utils/app_localizations.dart';
 
 class CustomAppBar extends StatelessWidget {
-  final VoidCallback onHomePressed;
-  final VoidCallback onAboutPressed;
-  final VoidCallback onSkillsPressed;
-  final VoidCallback onProjectsPressed;
-  final VoidCallback onContactPressed;
-  final bool isArabic;
-  final VoidCallback onLanguageToggle;
-
   const CustomAppBar({
     super.key,
     required this.onHomePressed,
@@ -22,205 +17,217 @@ class CustomAppBar extends StatelessWidget {
     required this.onLanguageToggle,
   });
 
+  final VoidCallback onHomePressed;
+  final VoidCallback onAboutPressed;
+  final VoidCallback onSkillsPressed;
+  final VoidCallback onProjectsPressed;
+  final VoidCallback onContactPressed;
+  final bool isArabic;
+  final VoidCallback onLanguageToggle;
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
+    final mobile = MediaQuery.sizeOf(context).width < 820;
     final localizations = AppLocalizations(isArabic ? 'ar' : 'en');
-    return Container(
-      height: 80,
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 60),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0A0E27).withOpacity(0.95),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          height: 76,
+          padding: EdgeInsets.symmetric(horizontal: mobile ? 18 : 42),
+          decoration: BoxDecoration(
+            color: PortfolioColors.background.withValues(alpha: 0.82),
+            border: const Border(
+              bottom: BorderSide(color: PortfolioColors.border),
+            ),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Logo and Name
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1340),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: onHomePressed,
+                    borderRadius: BorderRadius.circular(14),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                PortfolioColors.primary,
+                                PortfolioColors.secondary,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: PortfolioColors.primary.withValues(
+                                  alpha: 0.18,
+                                ),
+                                blurRadius: 18,
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'IT',
+                              style: TextStyle(
+                                color: PortfolioColors.background,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (!mobile) ...[
+                          const SizedBox(width: 12),
+                          Text(
+                            localizations.translate('name'),
+                            style: const TextStyle(
+                              color: PortfolioColors.text,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(
-                  child: Icon(Icons.person, color: Colors.white, size: 24),
-                ),
-              ),
-              if (!isMobile) ...[
-                const SizedBox(width: 12),
-                Text(
-                  localizations.translate('name'),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  const Spacer(),
+                  if (mobile)
+                    IconButton(
+                      onPressed: () => _showMobileMenu(context, localizations),
+                      icon: const Icon(Icons.menu_rounded),
+                    )
+                  else ...[
+                    _NavItem(
+                      label: localizations.translate('home'),
+                      onTap: onHomePressed,
+                    ),
+                    _NavItem(
+                      label: localizations.translate('about'),
+                      onTap: onAboutPressed,
+                    ),
+                    _NavItem(
+                      label: localizations.translate('skills'),
+                      onTap: onSkillsPressed,
+                    ),
+                    _NavItem(
+                      label: localizations.translate('projects'),
+                      onTap: onProjectsPressed,
+                    ),
+                    const SizedBox(width: 12),
+                    FilledButton(
+                      onPressed: onContactPressed,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 13,
+                        ),
+                      ),
+                      child: Text(localizations.translate('contact')),
+                    ),
+                  ],
+                  const SizedBox(width: 8),
+                  IconButton(
+                    tooltip: isArabic ? 'English' : 'العربية',
+                    onPressed: onLanguageToggle,
+                    style: IconButton.styleFrom(
+                      foregroundColor: PortfolioColors.text,
+                      backgroundColor: Colors.white.withValues(alpha: 0.045),
+                    ),
+                    icon: const Icon(Icons.language_rounded, size: 20),
                   ),
-                ),
-              ],
-            ],
-          ),
-          // Navigation buttons and language toggle
-          Row(
-            children: [
-              if (isMobile)
-                _buildMobileMenu(context)
-              else
-                _buildDesktopMenu(localizations),
-              const SizedBox(width: 16),
-              IconButton(
-                icon: Icon(
-                  isArabic ? Icons.language : Icons.translate,
-                  color: Colors.white,
-                ),
-                tooltip: isArabic ? 'English' : 'العربية',
-                onPressed: onLanguageToggle,
+                ],
               ),
-            ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildDesktopMenu(AppLocalizations localizations) {
-    return Row(
-      children: [
-        _NavButton(
-          label: localizations.translate('home'),
-          onPressed: onHomePressed,
-        ),
-        _NavButton(
-          label: localizations.translate('about'),
-          onPressed: onAboutPressed,
-        ),
-        _NavButton(
-          label: localizations.translate('skills'),
-          onPressed: onSkillsPressed,
-        ),
-        _NavButton(
-          label: localizations.translate('projects'),
-          onPressed: onProjectsPressed,
-        ),
-        const SizedBox(width: 20),
-        ElevatedButton(
-          onPressed: onContactPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00B4DB),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            localizations.translate('contact'),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+  Future<void> _showMobileMenu(
+    BuildContext context,
+    AppLocalizations localizations,
+  ) {
+    final items = [
+      (localizations.translate('home'), onHomePressed),
+      (localizations.translate('about'), onAboutPressed),
+      (localizations.translate('skills'), onSkillsPressed),
+      (localizations.translate('projects'), onProjectsPressed),
+      (localizations.translate('contact'), onContactPressed),
+    ];
+    return showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: PortfolioColors.surface,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 4, 18, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final item in items)
+                ListTile(
+                  title: Text(
+                    item.$1,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_rounded, size: 18),
+                  onTap: () {
+                    Navigator.pop(context);
+                    item.$2();
+                  },
+                ),
+            ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildMobileMenu(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.menu, color: Colors.white),
-      onPressed: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: const Color(0xFF1A1E3C),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          builder: (context) => Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _MobileNavItem(label: 'Home', onPressed: onHomePressed),
-                _MobileNavItem(label: 'About', onPressed: onAboutPressed),
-                _MobileNavItem(label: 'Skills', onPressed: onSkillsPressed),
-                _MobileNavItem(label: 'Projects', onPressed: onProjectsPressed),
-                _MobileNavItem(label: 'Contact', onPressed: onContactPressed),
-              ],
-            ),
-          ),
-        );
-      },
+      ),
     );
   }
 }
 
-class _NavButton extends StatefulWidget {
-  final String label;
-  final VoidCallback onPressed;
+class _NavItem extends StatefulWidget {
+  const _NavItem({required this.label, required this.onTap});
 
-  const _NavButton({required this.label, required this.onPressed});
+  final String label;
+  final VoidCallback onTap;
 
   @override
-  State<_NavButton> createState() => _NavButtonState();
+  State<_NavItem> createState() => _NavItemState();
 }
 
-class _NavButtonState extends State<_NavButton> {
-  bool _isHovered = false;
+class _NavItemState extends State<_NavItem> {
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child: TextButton(
-        onPressed: widget.onPressed,
-        child: Text(
-          widget.label,
+        onPressed: widget.onTap,
+        style: TextButton.styleFrom(
+          foregroundColor:
+              _hovered ? PortfolioColors.primary : PortfolioColors.muted,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        ),
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 160),
           style: TextStyle(
-            color: _isHovered ? const Color(0xFF00B4DB) : Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+            color:
+                _hovered ? PortfolioColors.primary : PortfolioColors.muted,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
           ),
+          child: Text(widget.label),
         ),
       ),
-    );
-  }
-}
-
-class _MobileNavItem extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-
-  const _MobileNavItem({required this.label, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      onTap: () {
-        Navigator.pop(context);
-        onPressed();
-      },
     );
   }
 }

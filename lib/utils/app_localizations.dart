@@ -23,29 +23,39 @@ class AppLocalizations {
       // About Section
       'about_me': 'About Me',
       'about_description_1':
-          'I\'m a passionate Flutter Developer and Communications & Electronics Engineering student at Zagazig University.',
-      'about_description_2':
-          'With hands-on experience since 2022, I specialize in:',
-      'about_point_1': 'Cross-platform mobile development with Flutter & Dart',
-      'about_point_2':
-          'State management (Bloc/Cubit, GetX, Riverpod, Provider)',
-      'about_point_3': 'Firebase integration & REST APIs',
-      'about_point_4': 'IoT & Hardware integration (Bluetooth, MQTT)',
-      'about_point_5': 'Industrial automation (PLC programming)',
+          'Flutter Developer with a strong background in Communications & Electronics Engineering. Experienced in building cross-platform mobile apps with clean code and great user experience. Passionate about automation, IoT, and continuous learning.',
+      'about_description_2': 'Key skills and experience since 2022:',
+      'about_point_1':
+          'Mobile Development: Flutter, Dart, Android Studio, VS Code, Git, GitHub',
+      'about_point_2': 'State Management: Bloc/Cubit, GetX, Provider',
+      'about_point_3':
+          'Backend & APIs: REST APIs, Dio, Firebase (Auth, Firestore, Storage), MQTT',
+      'about_point_4': 'Local Storage: Hive, SharedPreferences',
+      'about_point_5': 'Hardware Integration: Bluetooth Serial, MQTT Client',
+      'about_point_6':
+          'Industrial Training: PLC Programming, Electric Motor Control, Control Systems',
+      'about_point_7':
+          'UI Development: Responsive layouts, Custom widgets, Material Design',
       'about_description_3':
-          'I combine my engineering background with software development to create innovative solutions. Let\'s build something amazing together!',
+          'Combining engineering and software skills to deliver innovative solutions. Always eager to learn and take on new challenges.',
       'education': 'Education',
-      'education_title': 'B.Eng. Communications & Electronics',
-      'education_period': '2020 - 2025',
+      'education_title':
+          'Bachelor of Engineering in Communications and Electronics',
+      'education_period': 'Zagazig University, Egypt | 2020 - 2025',
       'experience': 'Experience',
-      'experience_title': 'Flutter Developer',
+      'experience_title': 'Flutter Developer - Freelance Projects',
       'experience_period': 'Jan 2022 - Present',
+      'experience_details':
+          '• Built mobile applications using Flutter with focus on clean code and user experience\n• Created monitoring system with MQTT for real-time data display from sensors and pumps\n• Developed Bluetooth car controller app for sending commands and managing connections\n• Implemented Firebase Authentication, Firestore database, and Cloud Storage in projects\n• Used Bloc/Cubit and Provider for state management across different apps\n• Designed responsive UIs that work on mobile phones and tablets\n• Published app on Google Play Store with regular updates based on user feedback',
       'certifications': 'Certifications',
-      'certifications_title': 'Industrial Automation Training',
+      'certifications_title': 'HA Consulting Group for Automation Solutions',
       'certifications_period': '2025',
+      'certifications_details':
+          '• PLC Basic Programming - 3 weeks intensive training (Aug - Sep 2025) — Grade: Excellent\n• Electric Motor & Drive Programming - 2 weeks (Sep 2025) — Grade: Excellent\n• Classic Control Systems - 3 weeks (Jul - Aug 2025) — Grade: Excellent',
 
       // Skills Section
-      'skills_tech': 'Skills & Technologies',
+      'skills_tech':
+          'Mobile: Flutter, Dart, Android Studio, VS Code | State Management: Bloc, Cubit, GetX, Provider | Backend: REST APIs, Dio, Firebase, MQTT | Storage: Hive, SharedPreferences | Hardware: Bluetooth, MQTT | UI: Responsive, Custom Widgets, Material Design',
 
       // Projects Section
       'featured_projects': 'Featured Projects',
@@ -57,32 +67,32 @@ class AppLocalizations {
       // Project 1
       'project1_title': 'October SCADA',
       'project1_desc':
-          'Station monitoring app with real-time MQTT data from sensors, pumps, and valves with responsive UI and animated displays',
+          'Mobile app for monitoring water pumping stations with real-time data from sensors. Used MQTT client to receive data about pumps, valves, tank levels, and pressure. Responsive UI with animated water tank displays, weather info, and gauges. Technologies: Flutter, MQTT Client, Riverpod, Responsive UI',
 
       // Project 2
       'project2_title': 'Auto Car Controller',
       'project2_desc':
-          'Bluetooth IoT app for Arduino car control with manual/automatic modes, connection management, and speed control',
+          'Bluetooth app to control Arduino-based car with manual and automatic modes. Bluetooth scanning, pairing, and connection with auto-reconnect. Control interface with buttons for directions and slider for speed. Status screen showing connection info and last sent commands. Technologies: Flutter, Bluetooth Serial, Provider, SharedPreferences',
 
       // Project 3
       'project3_title': '3SA - Autism Support',
       'project3_desc':
-          'Educational app helping autistic children learn communication skills with interactive lessons and multimedia content',
+          'Educational app to help autistic children learn communication and behavior skills. Interactive lessons with animations, sounds, and visual feedback. Multimedia content (images, videos, audio) that loads based on progress. Technologies: Flutter, GetX, Custom Animations, Media Players',
 
       // Project 4
       'project4_title': 'Fitness Tracker',
       'project4_desc':
-          'Workout and nutrition tracking app with clean architecture, progress charts, and local storage',
+          'App for tracking workouts, meals, and body measurements. Log weight, create workout plans, and view progress with charts. Clean Architecture pattern, Cubit for state management, Hive for local data storage. Technologies: Flutter, Cubit, Clean Architecture, Hive, Charts',
 
       // Project 5
       'project5_title': 'Bookify',
       'project5_desc':
-          'Book reading app with bookmarks, themes, reading history, and offline support using Hive database',
+          'Book reading app with bookmarks, light/dark themes, and reading history. Simple UI with easy navigation and comfortable reading experience. Used Hive to save books locally for offline reading. Technologies: Flutter, GetX, Hive, Custom Widgets',
 
       // Project 6
       'project6_title': 'Paqyat - Islamic App',
       'project6_desc':
-          'Published Islamic content app with Quran, Azkar, prayer times, and media using Firebase Storage',
+          'Published app on Google Play for Quran, Azkar, prayer times, and Islamic media. Arabic support with RTL layout and multiple theme colors. Used Firebase Storage to host and deliver audio/video content. Technologies: Flutter, Firebase Storage, Media Players',
 
       // Contact Section
       'get_in_touch': 'Get In Touch',
@@ -146,28 +156,38 @@ class AppLocalizations {
       // About Section
       'about_me': 'نبذة عني',
       'about_description_1':
-          'أنا مطور Flutter شغوف وطالب هندسة اتصالات وإلكترونيات في جامعة الزقازيق.',
-      'about_description_2': 'مع خبرة عملية منذ 2022، أتخصص في:',
+          'مطور تطبيقات Flutter بخلفية قوية في هندسة الاتصالات والإلكترونيات. خبرة في بناء تطبيقات جوال متعددة المنصات بكود نظيف وتجربة مستخدم ممتازة. شغوف بالأتمتة وإنترنت الأشياء والتعلم المستمر.',
+      'about_description_2': 'أهم المهارات والخبرات منذ 2022:',
       'about_point_1':
-          'تطوير تطبيقات الجوال متعددة المنصات باستخدام Flutter و Dart',
-      'about_point_2': 'إدارة الحالة (Bloc/Cubit, GetX, Riverpod, Provider)',
-      'about_point_3': 'تكامل Firebase و REST APIs',
-      'about_point_4': 'تكامل إنترنت الأشياء والأجهزة (Bluetooth, MQTT)',
-      'about_point_5': 'الأتمتة الصناعية (برمجة PLC)',
+          'تطوير تطبيقات الجوال: Flutter، Dart، Android Studio، VS Code، Git، GitHub',
+      'about_point_2': 'إدارة الحالة: Bloc/Cubit، GetX، Provider',
+      'about_point_3':
+          'الواجهات الخلفية وAPIs: REST APIs، Dio، Firebase (Auth، Firestore، Storage)، MQTT',
+      'about_point_4': 'التخزين المحلي: Hive، SharedPreferences',
+      'about_point_5': 'تكامل العتاد: Bluetooth Serial، MQTT Client',
+      'about_point_6':
+          'تدريب صناعي: برمجة PLC، التحكم في المحركات الكهربائية، أنظمة التحكم',
+      'about_point_7':
+          'تطوير الواجهات: تصاميم متجاوبة، Widgets مخصصة، Material Design',
       'about_description_3':
-          'أجمع بين خلفيتي الهندسية وتطوير البرمجيات لإنشاء حلول مبتكرة. دعنا نبني شيئاً رائعاً معاً!',
+          'أجمع بين الهندسة والبرمجة لتقديم حلول مبتكرة. دائم التعلم ومستعد لأي تحدٍ جديد.',
       'education': 'التعليم',
       'education_title': 'بكالوريوس هندسة اتصالات وإلكترونيات',
-      'education_period': '2020 - 2025',
+      'education_period': 'جامعة الزقازيق، مصر | 2020 - 2025',
       'experience': 'الخبرة',
-      'experience_title': 'مطور Flutter',
+      'experience_title': 'مطور Flutter - مشاريع حرة',
       'experience_period': 'يناير 2022 - حتى الآن',
+      'experience_details':
+          '• بناء تطبيقات جوال باستخدام Flutter مع التركيز على الكود النظيف وتجربة المستخدم\n• إنشاء نظام مراقبة بالـ MQTT لعرض البيانات الفورية من المستشعرات والمضخات\n• تطوير تطبيق تحكم بالسيارة عبر البلوتوث لإرسال الأوامر وإدارة الاتصال\n• تكامل Firebase Authentication وFirestore وCloud Storage في المشاريع\n• استخدام Bloc/Cubit وProvider لإدارة الحالة\n• تصميم واجهات متجاوبة تعمل على الجوال والتابلت\n• نشر تطبيق على Google Play مع تحديثات مستمرة بناءً على ملاحظات المستخدمين',
       'certifications': 'الشهادات',
-      'certifications_title': 'تدريب الأتمتة الصناعية',
+      'certifications_title': 'HA Consulting Group لحلول الأتمتة',
       'certifications_period': '2025',
+      'certifications_details':
+          '• برمجة PLC الأساسية - تدريب مكثف 3 أسابيع (أغسطس - سبتمبر 2025) — التقدير: ممتاز\n• برمجة المحركات الكهربائية وقيادتها - أسبوعين (سبتمبر 2025) — التقدير: ممتاز\n• أنظمة التحكم الكلاسيكية - 3 أسابيع (يوليو - أغسطس 2025) — التقدير: ممتاز',
 
       // Skills Section
-      'skills_tech': 'المهارات والتقنيات',
+      'skills_tech':
+          'تطوير الجوال: Flutter، Dart، Android Studio، VS Code | إدارة الحالة: Bloc، Cubit، GetX، Provider | الخلفية: REST APIs، Dio، Firebase، MQTT | التخزين: Hive، SharedPreferences | العتاد: Bluetooth، MQTT | الواجهات: تصاميم متجاوبة، Widgets مخصصة، Material Design',
 
       // Projects Section
       'featured_projects': 'مشاريع مميزة',
@@ -178,32 +198,32 @@ class AppLocalizations {
       // Project 1
       'project1_title': 'October SCADA',
       'project1_desc':
-          'تطبيق مراقبة المحطات مع بيانات MQTT الفورية من المستشعرات والمضخات والصمامات مع واجهة متجاوبة',
+          'تطبيق لمراقبة محطات ضخ المياه مع بيانات فورية من المستشعرات. استخدم MQTT لاستقبال بيانات المضخات والصمامات ومستوى الخزانات والضغط. واجهة متجاوبة مع رسوم متحركة للخزانات، ومعلومات طقس وعدادات. التقنيات: Flutter، MQTT Client، Riverpod، Responsive UI',
 
       // Project 2
       'project2_title': 'Auto Car Controller',
       'project2_desc':
-          'تطبيق Bluetooth للتحكم في سيارة Arduino مع أوضاع يدوية/تلقائية وإدارة الاتصال والتحكم في السرعة',
+          'تطبيق بلوتوث للتحكم في سيارة أردوينو بأوضاع يدوية وتلقائية. فحص وربط تلقائي بالبلوتوث، واجهة تحكم بالأزرار وسلايدر للسرعة، شاشة حالة الاتصال وآخر الأوامر. التقنيات: Flutter، Bluetooth Serial، Provider، SharedPreferences',
 
       // Project 3
       'project3_title': '3SA - دعم التوحد',
       'project3_desc':
-          'تطبيق تعليمي يساعد الأطفال المصابين بالتوحد على تعلم مهارات التواصل مع دروس تفاعلية ومحتوى متعدد الوسائط',
+          'تطبيق تعليمي لمساعدة الأطفال المصابين بالتوحد على تعلم مهارات التواصل والسلوك. دروس تفاعلية مع رسوم متحركة وأصوات وتغذية بصرية. محتوى وسائط متعددة (صور، فيديو، صوت) حسب التقدم. التقنيات: Flutter، GetX، Animations، Media Players',
 
       // Project 4
       'project4_title': 'Fitness Tracker',
       'project4_desc':
-          'تطبيق تتبع التمارين والتغذية مع هندسة نظيفة ورسوم بيانية للتقدم وتخزين محلي',
+          'تطبيق لتتبع التمارين والوجبات وقياسات الجسم. تسجيل الوزن، إنشاء خطط تمارين، وعرض التقدم برسوم بيانية. هندسة نظيفة، Cubit لإدارة الحالة، Hive للتخزين المحلي. التقنيات: Flutter، Cubit، Clean Architecture، Hive، Charts',
 
       // Project 5
       'project5_title': 'Bookify',
       'project5_desc':
-          'تطبيق قراءة الكتب مع إشارات مرجعية وسمات وسجل القراءة ودعم غير متصل بالإنترنت',
+          'تطبيق قراءة كتب مع إشارات مرجعية، سمات فاتحة/داكنة، وسجل قراءة. واجهة بسيطة وسهلة القراءة. استخدم Hive لحفظ الكتب محلياً. التقنيات: Flutter، GetX، Hive، Widgets مخصصة',
 
       // Project 6
       'project6_title': 'باقيات - تطبيق إسلامي',
       'project6_desc':
-          'تطبيق محتوى إسلامي منشور مع القرآن والأذكار وأوقات الصلاة والوسائط باستخدام Firebase Storage',
+          'تطبيق منشور على Google Play للقرآن والأذكار وأوقات الصلاة ووسائط إسلامية. دعم العربية وRTL وألوان متعددة. استخدم Firebase Storage لاستضافة الوسائط. التقنيات: Flutter، Firebase Storage، Media Players',
 
       // Contact Section
       'get_in_touch': 'تواصل معي',

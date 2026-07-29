@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'config/supabase_config.dart';
+import 'screens/admin/admin_gate.dart';
 import 'screens/home_screen.dart';
+import 'theme/portfolio_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.initialize();
   runApp(const PortfolioApp());
 }
 
@@ -30,29 +35,22 @@ class _PortfolioAppState extends State<PortfolioApp> {
           ? 'إبراهيم ثروت - مطور فلاتر'
           : 'Ibrahim Tharwat - Flutter Developer',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0E27),
-        fontFamily: isArabic ? 'Cairo' : 'Poppins',
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+      theme: PortfolioTheme.dark(isArabic: isArabic),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/admin') {
+          return MaterialPageRoute<void>(
+            builder: (_) => const AdminGate(),
+            settings: settings,
+          );
+        }
+        return MaterialPageRoute<void>(
+          builder: (_) => HomeScreen(
+            languageCode: _languageCode,
+            onLanguageToggle: _toggleLanguage,
           ),
-          displayMedium: TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-          bodyLarge: TextStyle(fontSize: 16, color: Color(0xFFB0B0B0)),
-        ),
-      ),
-      home: HomeScreen(
-        languageCode: _languageCode,
-        onLanguageToggle: _toggleLanguage,
-      ),
+          settings: settings,
+        );
+      },
     );
   }
 }

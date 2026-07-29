@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../utils/app_localizations.dart';
 import '../widgets/about_section.dart';
 import '../widgets/app_bar_widget.dart';
+import '../widgets/common/animated_portfolio_background.dart';
+import '../widgets/common/scroll_reveal.dart';
 import '../widgets/contact_section.dart';
 import '../widgets/footer_widget.dart';
 import '../widgets/hero_section.dart';
@@ -52,16 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: Stack(
           children: [
-            // Background gradient
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF0A0E27), Color(0xFF1A1E3C)],
-                ),
-              ),
-            ),
+            const AnimatedPortfolioBackground(),
             // Content
             Column(
               children: [
@@ -79,16 +72,48 @@ class _HomeScreenState extends State<HomeScreen> {
                     controller: _scrollController,
                     child: Column(
                       children: [
-                        HeroSection(
+                        ScrollReveal(
                           key: _heroKey,
-                          languageCode: widget.languageCode,
-                          onLanguageToggle: widget.onLanguageToggle,
+                          controller: _scrollController,
+                          child: HeroSection(
+                            languageCode: widget.languageCode,
+                            onLanguageToggle: widget.onLanguageToggle,
+                            onViewWork: () =>
+                                _scrollToSection(_projectsKey),
+                          ),
                         ),
-                        AboutSection(key: _aboutKey),
-                        SkillsSection(key: _skillsKey),
-                        ProjectsSection(key: _projectsKey),
-                        ContactSection(key: _contactKey),
-                        FooterWidget(),
+                        ScrollReveal(
+                          key: _aboutKey,
+                          controller: _scrollController,
+                          child: AboutSection(
+                            languageCode: widget.languageCode,
+                          ),
+                        ),
+                        ScrollReveal(
+                          key: _skillsKey,
+                          controller: _scrollController,
+                          child: SkillsSection(
+                            languageCode: widget.languageCode,
+                          ),
+                        ),
+                        ScrollReveal(
+                          key: _projectsKey,
+                          controller: _scrollController,
+                          child: ProjectsSection(
+                            languageCode: widget.languageCode,
+                          ),
+                        ),
+                        ScrollReveal(
+                          key: _contactKey,
+                          controller: _scrollController,
+                          child: ContactSection(
+                            languageCode: widget.languageCode,
+                          ),
+                        ),
+                        ScrollReveal(
+                          controller: _scrollController,
+                          child: const FooterWidget(),
+                        ),
                       ],
                     ),
                   ),

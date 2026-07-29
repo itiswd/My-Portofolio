@@ -1,306 +1,614 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../theme/portfolio_theme.dart';
 import '../utils/app_localizations.dart';
 
-class HeroSection extends StatelessWidget {
-  final String languageCode;
-  final VoidCallback onLanguageToggle;
+class HeroSection extends StatefulWidget {
   const HeroSection({
     super.key,
     required this.languageCode,
     required this.onLanguageToggle,
+    required this.onViewWork,
   });
+
+  final String languageCode;
+  final VoidCallback onLanguageToggle;
+  final VoidCallback onViewWork;
+
+  @override
+  State<HeroSection> createState() => _HeroSectionState();
+}
+
+class _HeroSectionState extends State<HeroSection>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _motion;
+
+  @override
+  void initState() {
+    super.initState();
+    _motion = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 7),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _motion.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-
+    final width = MediaQuery.sizeOf(context).width;
+    final compact = width < 860;
     return Container(
-      constraints: const BoxConstraints(minHeight: 600),
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 20 : 60,
-        vertical: 80,
+      constraints: const BoxConstraints(minHeight: 760),
+      padding: EdgeInsets.fromLTRB(
+        width < 600 ? 20 : 48,
+        compact ? 62 : 96,
+        width < 600 ? 20 : 48,
+        90,
       ),
-      child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1320),
+          child: compact
+              ? Column(
+                  children: [
+                    _HeroCopy(
+                      languageCode: widget.languageCode,
+                      onViewWork: widget.onViewWork,
+                    ),
+                    const SizedBox(height: 54),
+                    _DeveloperVisual(animation: _motion),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 11,
+                      child: _HeroCopy(
+                        languageCode: widget.languageCode,
+                        onViewWork: widget.onViewWork,
+                      ),
+                    ),
+                    const SizedBox(width: 72),
+                    Expanded(
+                      flex: 9,
+                      child: _DeveloperVisual(animation: _motion),
+                    ),
+                  ],
+                ),
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildDesktopLayout() {
-    return Row(
-      children: [
-        Expanded(flex: 3, child: _buildTextContent()),
-        const SizedBox(width: 60),
-        Expanded(flex: 2, child: _buildAnimatedCard()),
-      ],
-    );
-  }
+class _HeroCopy extends StatelessWidget {
+  const _HeroCopy({
+    required this.languageCode,
+    required this.onViewWork,
+  });
 
-  Widget _buildMobileLayout() {
-    return Column(
-      children: [
-        _buildAnimatedCard(),
-        const SizedBox(height: 40),
-        _buildTextContent(),
-      ],
-    );
-  }
+  final String languageCode;
+  final VoidCallback onViewWork;
 
-  Widget _buildTextContent() {
+  bool get isArabic => languageCode == 'ar';
+
+  @override
+  Widget build(BuildContext context) {
     final localizations = AppLocalizations(languageCode);
-    final isArabic = languageCode == 'ar';
+    final width = MediaQuery.sizeOf(context).width;
+    final titleSize = width < 520
+        ? 48.0
+        : width < 1100
+            ? 62.0
+            : 76.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+          decoration: BoxDecoration(
+            color: PortfolioColors.accent.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: PortfolioColors.accent.withValues(alpha: 0.24),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration: const BoxDecoration(
+                  color: PortfolioColors.accent,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: PortfolioColors.accent,
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 9),
+              Text(
+                isArabic
+                    ? 'متاح لفرص العمل والمشاريع'
+                    : 'AVAILABLE FOR WORK & COLLABORATION',
+                style: const TextStyle(
+                  color: PortfolioColors.accent,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.25,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 28),
         Text(
           localizations.translate('hi_im'),
           style: const TextStyle(
-            fontSize: 24,
-            color: Color(0xFF00B4DB),
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          localizations.translate('name'),
-          style: const TextStyle(
-            fontSize: 56,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          localizations.translate('title'),
-          style: const TextStyle(
-            fontSize: 32,
-            color: Color(0xFFB0B0B0),
+            color: PortfolioColors.muted,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 30),
-        Text(
-          localizations.translate('hero_description'),
-          style: const TextStyle(
-            fontSize: 18,
-            color: Color(0xFFB0B0B0),
-            height: 1.6,
+        const SizedBox(height: 5),
+        GradientText(
+          localizations.translate('name'),
+          style: TextStyle(
+            fontSize: titleSize,
+            height: 1.04,
+            letterSpacing: -2.5,
+            fontWeight: FontWeight.w900,
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 12),
+        Text(
+          isArabic
+              ? 'أحوّل الأفكار المعقدة إلى منتجات رقمية بسيطة.'
+              : 'I turn complex ideas into simple digital products.',
+          style: TextStyle(
+            color: PortfolioColors.text,
+            fontSize: width < 600 ? 25 : 34,
+            height: 1.25,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.6,
+          ),
+        ),
+        const SizedBox(height: 22),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 690),
+          child: Text(
+            localizations.translate('hero_description'),
+            style: const TextStyle(
+              color: PortfolioColors.muted,
+              fontSize: 17,
+              height: 1.75,
+            ),
+          ),
+        ),
+        const SizedBox(height: 34),
         Wrap(
-          spacing: 20,
-          runSpacing: 20,
+          spacing: 12,
+          runSpacing: 12,
           children: [
-            _buildPrimaryButton(
-              localizations.translate('view_work'),
-              Icons.arrow_forward,
-              () {},
+            FilledButton.icon(
+              onPressed: onViewWork,
+              icon: const Icon(Icons.arrow_downward_rounded, size: 19),
+              label: Text(localizations.translate('view_work')),
             ),
-            _buildSecondaryButton(
-              localizations.translate('download_cv'),
-              Icons.download,
-              () async {
-                const cvAssetPath = 'assets/files/CV.pdf';
-                final uri = Uri.parse(cvAssetPath);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri);
-                } else {
-                  final fileUri = Uri.file(cvAssetPath);
-                  if (await canLaunchUrl(fileUri)) {
-                    await launchUrl(fileUri);
-                  }
-                }
-              },
-            ),
-            IconButton(
-              icon: Icon(
-                isArabic ? Icons.language : Icons.translate,
-                color: Colors.white,
-              ),
-              tooltip: isArabic ? 'English' : 'العربية',
-              onPressed: onLanguageToggle,
+            OutlinedButton.icon(
+              onPressed: _openCv,
+              icon: const Icon(Icons.download_rounded, size: 19),
+              label: Text(localizations.translate('download_cv')),
             ),
           ],
         ),
-        const SizedBox(height: 40),
-        _buildSocialLinks(),
+        const SizedBox(height: 34),
+        Wrap(
+          spacing: 22,
+          runSpacing: 18,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _SocialLink(
+              label: 'GitHub',
+              icon: Icons.code_rounded,
+              url: 'https://github.com/itiswd',
+            ),
+            _SocialLink(
+              label: 'LinkedIn',
+              icon: Icons.work_outline_rounded,
+              url:
+                  'https://www.linkedin.com/in/ibrahim-tharwat-18aa77323',
+            ),
+            _SocialLink(
+              label: 'Email',
+              icon: Icons.alternate_email_rounded,
+              url: 'mailto:ibrahimthswd@gmail.com',
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildAnimatedCard() {
-    return Container(
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF00B4DB).withOpacity(0.1),
-            const Color(0xFF0083B0).withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Future<void> _openCv() async {
+    await launchUrl(
+      Uri.parse('assets/assets/files/CV.pdf'),
+      webOnlyWindowName: '_blank',
+    );
+  }
+}
+
+class _SocialLink extends StatefulWidget {
+  const _SocialLink({
+    required this.label,
+    required this.icon,
+    required this.url,
+  });
+
+  final String label;
+  final IconData icon;
+  final String url;
+
+  @override
+  State<_SocialLink> createState() => _SocialLinkState();
+}
+
+class _SocialLinkState extends State<_SocialLink> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: InkWell(
+        onTap: () => launchUrl(
+          Uri.parse(widget.url),
+          webOnlyWindowName: '_blank',
         ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFF00B4DB).withOpacity(0.3),
-          width: 1,
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 180),
+          style: TextStyle(
+            color: _hovered
+                ? PortfolioColors.primary
+                : PortfolioColors.muted,
+            fontWeight: FontWeight.w700,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                widget.icon,
+                size: 18,
+                color: _hovered
+                    ? PortfolioColors.primary
+                    : PortfolioColors.muted,
+              ),
+              const SizedBox(width: 8),
+              Text(widget.label),
+            ],
+          ),
         ),
       ),
-      child: Column(
+    );
+  }
+}
+
+class _DeveloperVisual extends StatelessWidget {
+  const _DeveloperVisual({required this.animation});
+
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        final phase = animation.value * math.pi * 2;
+        return Transform.translate(
+          offset: Offset(0, math.sin(phase) * 7),
+          child: child,
+        );
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Container(
-            width: 200,
-            height: 200,
+            height: 510,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
               gradient: const LinearGradient(
-                colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF15243A), Color(0xFF0A101C)],
               ),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: PortfolioColors.border),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00B4DB).withOpacity(0.5),
-                  blurRadius: 30,
-                  spreadRadius: 5,
+                  color: PortfolioColors.secondary.withValues(alpha: 0.14),
+                  blurRadius: 70,
+                  offset: const Offset(20, 26),
                 ),
               ],
             ),
-            child: const Center(
-              child: Icon(Icons.code, size: 100, color: Colors.white),
+            child: Column(
+              children: [
+                const _WindowBar(),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(27),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const _CodeLine(
+                          number: '01',
+                          parts: [
+                            _CodePart('class ', Color(0xFFB99AFF)),
+                            _CodePart('Ibrahim ', PortfolioColors.primary),
+                            _CodePart('{', PortfolioColors.text),
+                          ],
+                        ),
+                        const _CodeLine(
+                          number: '02',
+                          indent: 18,
+                          parts: [
+                            _CodePart('final ', Color(0xFFB99AFF)),
+                            _CodePart('focus ', PortfolioColors.text),
+                            _CodePart('= ', PortfolioColors.muted),
+                            _CodePart(
+                              "'meaningful products';",
+                              Color(0xFFB6FF6A),
+                            ),
+                          ],
+                        ),
+                        const _CodeLine(
+                          number: '03',
+                          indent: 18,
+                          parts: [
+                            _CodePart('final ', Color(0xFFB99AFF)),
+                            _CodePart('stack ', PortfolioColors.text),
+                            _CodePart('= ', PortfolioColors.muted),
+                            _CodePart(
+                              '[Flutter, Supabase, IoT];',
+                              Color(0xFFFFC66D),
+                            ),
+                          ],
+                        ),
+                        const _CodeLine(
+                          number: '04',
+                          indent: 18,
+                          parts: [
+                            _CodePart('Future', Color(0xFFB99AFF)),
+                            _CodePart('<Product> ', PortfolioColors.primary),
+                            _CodePart('build', PortfolioColors.text),
+                            _CodePart('() async {', PortfolioColors.muted),
+                          ],
+                        ),
+                        const _CodeLine(
+                          number: '05',
+                          indent: 36,
+                          parts: [
+                            _CodePart('return ', Color(0xFFB99AFF)),
+                            _CodePart('ideas', PortfolioColors.text),
+                            _CodePart('.ship();', PortfolioColors.primary),
+                          ],
+                        ),
+                        const _CodeLine(
+                          number: '06',
+                          indent: 18,
+                          parts: [_CodePart('}', PortfolioColors.muted)],
+                        ),
+                        const _CodeLine(
+                          number: '07',
+                          parts: [_CodePart('}', PortfolioColors.text)],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.24),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: PortfolioColors.border),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: PortfolioColors.accent,
+                                size: 18,
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  'Build successful • Ready to ship',
+                                  style: TextStyle(
+                                    color: PortfolioColors.muted,
+                                    fontSize: 12,
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 30),
-          _buildStatCard('50+', 'Projects Completed'),
-          const SizedBox(height: 15),
-          _buildStatCard('3+', 'Years Experience'),
-          const SizedBox(height: 15),
-          _buildStatCard('100%', 'Client Satisfaction'),
+          const PositionedDirectional(
+            start: -24,
+            top: 82,
+            child: _FloatingTag(
+              icon: Icons.flutter_dash_rounded,
+              label: 'Flutter',
+            ),
+          ),
+          const PositionedDirectional(
+            end: -20,
+            bottom: 70,
+            child: _FloatingTag(
+              icon: Icons.bolt_rounded,
+              label: 'Supabase',
+            ),
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildStatCard(String number, String label) {
+class _WindowBar extends StatelessWidget {
+  const _WindowBar();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1E3C),
-        borderRadius: BorderRadius.circular(10),
+      height: 54,
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      decoration: const BoxDecoration(
+        color: Color(0xFF111B2B),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        border: Border(bottom: BorderSide(color: PortfolioColors.border)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: const Row(
         children: [
+          _WindowDot(Color(0xFFFF647C)),
+          SizedBox(width: 7),
+          _WindowDot(Color(0xFFFFC66D)),
+          SizedBox(width: 7),
+          _WindowDot(PortfolioColors.accent),
+          Spacer(),
           Text(
-            number,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF00B4DB),
+            'ibrahim.dart',
+            style: TextStyle(
+              color: PortfolioColors.muted,
+              fontSize: 12,
+              fontFamily: 'monospace',
             ),
           ),
+          Spacer(),
+          SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+}
+
+class _WindowDot extends StatelessWidget {
+  const _WindowDot(this.color);
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+}
+
+class _CodeLine extends StatelessWidget {
+  const _CodeLine({
+    required this.number,
+    required this.parts,
+    this.indent = 0,
+  });
+
+  final String number;
+  final List<_CodePart> parts;
+  final double indent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 17),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 28,
+            child: Text(
+              number,
+              style: const TextStyle(
+                color: Colors.white24,
+                fontFamily: 'monospace',
+                fontSize: 12,
+              ),
+            ),
+          ),
+          SizedBox(width: indent),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: parts
+                    .map(
+                      (part) => TextSpan(
+                        text: part.text,
+                        style: TextStyle(color: part.color),
+                      ),
+                    )
+                    .toList(),
+              ),
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 13,
+                height: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CodePart {
+  const _CodePart(this.text, this.color);
+  final String text;
+  final Color color;
+}
+
+class _FloatingTag extends StatelessWidget {
+  const _FloatingTag({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return PortfolioPanel(
+      radius: 14,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: PortfolioColors.primary, size: 18),
+          const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(fontSize: 14, color: Color(0xFFB0B0B0)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrimaryButton(
-    String text,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF00B4DB),
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: PortfolioColors.text,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(width: 10),
-          Icon(icon, color: Colors.white),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSecondaryButton(
-    String text,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        side: const BorderSide(color: Color(0xFF00B4DB), width: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF00B4DB),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Icon(icon, color: const Color(0xFF00B4DB)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSocialLinks() {
-    return Row(
-      children: [
-        _buildSocialIcon('https://github.com/itiswd', Icons.code),
-        const SizedBox(width: 15),
-        _buildSocialIcon(
-          'https://www.linkedin.com/in/ibrahim-tharwat-18aa77323?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
-          Icons.business,
-        ),
-        const SizedBox(width: 15),
-        _buildSocialIcon('mailto:ibrahimthswd@gmail.com', Icons.email),
-      ],
-    );
-  }
-
-  Widget _buildSocialIcon(String url, IconData icon) {
-    return InkWell(
-      onTap: () async {
-        final uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1E3C),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFF00B4DB).withOpacity(0.3)),
-        ),
-        child: Icon(icon, color: const Color(0xFF00B4DB), size: 24),
       ),
     );
   }

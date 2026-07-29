@@ -37,6 +37,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   url_launcher: ^6.3.2
+  supabase_flutter: ^2.16.0
+  file_picker: ^10.3.10
+  video_player: ^2.10.1
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +65,7 @@ flutter:
 
   assets:
     - assets/files/CV.pdf
+    - config/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
