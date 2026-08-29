@@ -1,28 +1,26 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../providers/locale_provider.dart';
 import '../theme/portfolio_theme.dart';
 import '../utils/app_localizations.dart';
 
-class HeroSection extends StatefulWidget {
+class HeroSection extends ConsumerStatefulWidget {
   const HeroSection({
     super.key,
-    required this.languageCode,
-    required this.onLanguageToggle,
     required this.onViewWork,
   });
 
-  final String languageCode;
-  final VoidCallback onLanguageToggle;
   final VoidCallback onViewWork;
 
   @override
-  State<HeroSection> createState() => _HeroSectionState();
+  ConsumerState<HeroSection> createState() => _HeroSectionState();
 }
 
-class _HeroSectionState extends State<HeroSection>
+class _HeroSectionState extends ConsumerState<HeroSection>
     with SingleTickerProviderStateMixin {
   late final AnimationController _motion;
 
@@ -43,6 +41,7 @@ class _HeroSectionState extends State<HeroSection>
 
   @override
   Widget build(BuildContext context) {
+    final languageCode = ref.watch(localeProvider);
     final width = MediaQuery.sizeOf(context).width;
     final compact = width < 860;
     return Container(
@@ -60,7 +59,7 @@ class _HeroSectionState extends State<HeroSection>
               ? Column(
                   children: [
                     _HeroCopy(
-                      languageCode: widget.languageCode,
+                      languageCode: languageCode,
                       onViewWork: widget.onViewWork,
                     ),
                     const SizedBox(height: 54),
@@ -72,7 +71,7 @@ class _HeroSectionState extends State<HeroSection>
                     Expanded(
                       flex: 11,
                       child: _HeroCopy(
-                        languageCode: widget.languageCode,
+                        languageCode: languageCode,
                         onViewWork: widget.onViewWork,
                       ),
                     ),

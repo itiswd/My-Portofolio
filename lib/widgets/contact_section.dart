@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../providers/locale_provider.dart';
 import '../theme/portfolio_theme.dart';
 import 'common/section_heading.dart';
 
-class ContactSection extends StatefulWidget {
-  const ContactSection({super.key, required this.languageCode});
-
-  final String languageCode;
+class ContactSection extends ConsumerStatefulWidget {
+  const ContactSection({super.key});
 
   @override
-  State<ContactSection> createState() => _ContactSectionState();
+  ConsumerState<ContactSection> createState() => _ContactSectionState();
 }
 
-class _ContactSectionState extends State<ContactSection> {
+class _ContactSectionState extends ConsumerState<ContactSection> {
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _message = TextEditingController();
 
-  bool get _isArabic => widget.languageCode == 'ar';
+  bool get _isArabic => ref.read(localeProvider) == 'ar';
 
   @override
   void dispose() {
@@ -56,6 +56,7 @@ class _ContactSectionState extends State<ContactSection> {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = ref.watch(localeProvider) == 'ar';
     final width = MediaQuery.sizeOf(context).width;
     final compact = width < 860;
     return Container(
@@ -87,7 +88,7 @@ class _ContactSectionState extends State<ContactSection> {
             child: compact
                 ? Column(
                     children: [
-                      _ContactCopy(isArabic: _isArabic),
+                      _ContactCopy(isArabic: isArabic),
                       const SizedBox(height: 38),
                       _buildForm(),
                     ],
@@ -97,7 +98,7 @@ class _ContactSectionState extends State<ContactSection> {
                     children: [
                       Expanded(
                         flex: 5,
-                        child: _ContactCopy(isArabic: _isArabic),
+                        child: _ContactCopy(isArabic: isArabic),
                       ),
                       const SizedBox(width: 64),
                       Expanded(flex: 5, child: _buildForm()),

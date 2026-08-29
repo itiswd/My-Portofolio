@@ -14,20 +14,31 @@ class AnimatedPortfolioBackground extends StatefulWidget {
 
 class _AnimatedPortfolioBackgroundState
     extends State<AnimatedPortfolioBackground>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 18),
+      duration: const Duration(seconds: 24),
     )..repeat();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!_controller.isAnimating) _controller.repeat();
+    } else {
+      _controller.stop();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
@@ -36,34 +47,39 @@ class _AnimatedPortfolioBackgroundState
   Widget build(BuildContext context) {
     return IgnorePointer(
       child: RepaintBoundary(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            final phase = _controller.value * math.pi * 2;
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                const ColoredBox(color: PortfolioColors.background),
-                CustomPaint(painter: _GridPainter()),
-                Positioned(
-                  left: -120 + math.sin(phase) * 45,
-                  top: 50 + math.cos(phase) * 35,
-                  child: const _Glow(
-                    size: 420,
-                    color: PortfolioColors.secondary,
-                  ),
-                ),
-                Positioned(
-                  right: -150 + math.cos(phase) * 55,
-                  top: 330 + math.sin(phase) * 45,
-                  child: const _Glow(
-                    size: 500,
-                    color: PortfolioColors.primary,
-                  ),
-                ),
-              ],
-            );
-          },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            const ColoredBox(color: PortfolioColors.background),
+            RepaintBoundary(child: CustomPaint(painter: _GridPainter())),
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                final phase = _controller.value * math.pi * 2;
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned(
+                      left: -120 + math.sin(phase) * 45,
+                      top: 50 + math.cos(phase) * 35,
+                      child: const _Glow(
+                        size: 420,
+                        color: PortfolioColors.secondary,
+                      ),
+                    ),
+                    Positioned(
+                      right: -150 + math.cos(phase) * 55,
+                      top: 330 + math.sin(phase) * 45,
+                      child: const _Glow(
+                        size: 500,
+                        color: PortfolioColors.primary,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -78,16 +94,18 @@ class _Glow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            color.withValues(alpha: 0.12),
-            color.withValues(alpha: 0),
-          ],
+    return RepaintBoundary(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              color.withValues(alpha: 0.12),
+              color.withValues(alpha: 0),
+            ],
+          ),
         ),
       ),
     );

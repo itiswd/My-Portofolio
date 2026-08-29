@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/locale_provider.dart';
 import '../utils/app_localizations.dart';
 import '../widgets/about_section.dart';
 import '../widgets/app_bar_widget.dart';
@@ -11,21 +13,14 @@ import '../widgets/hero_section.dart';
 import '../widgets/projects_section.dart';
 import '../widgets/skills_section.dart';
 
-class HomeScreen extends StatefulWidget {
-  final String languageCode;
-  final VoidCallback onLanguageToggle;
-
-  const HomeScreen({
-    super.key,
-    required this.languageCode,
-    required this.onLanguageToggle,
-  });
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _heroKey = GlobalKey();
   final GlobalKey _aboutKey = GlobalKey();
@@ -46,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations(widget.languageCode);
+    final languageCode = ref.watch(localeProvider);
+    final localizations = AppLocalizations(languageCode);
     final isArabic = localizations.isArabic;
 
     return Directionality(
@@ -65,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   onProjectsPressed: () => _scrollToSection(_projectsKey),
                   onContactPressed: () => _scrollToSection(_contactKey),
                   isArabic: isArabic,
-                  onLanguageToggle: widget.onLanguageToggle,
+                  onLanguageToggle: () =>
+                      ref.read(localeProvider.notifier).toggle(),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -76,8 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           key: _heroKey,
                           controller: _scrollController,
                           child: HeroSection(
-                            languageCode: widget.languageCode,
-                            onLanguageToggle: widget.onLanguageToggle,
                             onViewWork: () =>
                                 _scrollToSection(_projectsKey),
                           ),
@@ -85,30 +80,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         ScrollReveal(
                           key: _aboutKey,
                           controller: _scrollController,
-                          child: AboutSection(
-                            languageCode: widget.languageCode,
-                          ),
+                          child: const AboutSection(),
                         ),
                         ScrollReveal(
                           key: _skillsKey,
                           controller: _scrollController,
-                          child: SkillsSection(
-                            languageCode: widget.languageCode,
-                          ),
+                          child: const SkillsSection(),
                         ),
                         ScrollReveal(
                           key: _projectsKey,
                           controller: _scrollController,
-                          child: ProjectsSection(
-                            languageCode: widget.languageCode,
-                          ),
+                          child: const ProjectsSection(),
                         ),
                         ScrollReveal(
                           key: _contactKey,
                           controller: _scrollController,
-                          child: ContactSection(
-                            languageCode: widget.languageCode,
-                          ),
+                          child: const ContactSection(),
                         ),
                         ScrollReveal(
                           controller: _scrollController,

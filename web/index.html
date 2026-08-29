@@ -18,21 +18,55 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Ibrahim Tharwat — Flutter developer portfolio.">
+  <meta name="theme-color" content="#07121F">
+  <meta name="color-scheme" content="dark">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="my_portofolio">
+  <meta name="apple-mobile-web-app-title" content="Ibrahim Tharwat">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>my_portofolio</title>
+  <title>Ibrahim Tharwat — Flutter Developer</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body { background: #07121F; height: 100%; }
+    #loading-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #07121F;
+      z-index: 9999;
+    }
+    #loading-splash .dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 3px solid rgba(56, 214, 231, 0.18);
+      border-top-color: #38D6E7;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+  <div id="loading-splash"><div class="dot"></div></div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('loading-splash');
+      if (splash) splash.remove();
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

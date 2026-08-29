@@ -1,85 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/project_repository.dart';
 import '../models/portfolio_project.dart';
+import '../providers/locale_provider.dart';
+import '../providers/projects_provider.dart';
 import 'project_details_dialog.dart';
 
-class ProjectsSection extends StatefulWidget {
-  const ProjectsSection({super.key, required this.languageCode});
-
-  final String languageCode;
+class ProjectsSection extends ConsumerWidget {
+  const ProjectsSection({super.key});
 
   @override
-  State<ProjectsSection> createState() => _ProjectsSectionState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isArabic = ref.watch(localeProvider) == 'ar';
+    final projectsAsync = ref.watch(publishedProjectsProvider);
+    final selectedCategory = ref.watch(selectedProjectCategoryProvider);
 
-class _ProjectsSectionState extends State<ProjectsSection> {
-  final _repository = ProjectRepository();
-  late Future<List<PortfolioProject>> _projects;
-  String _selectedCategory = 'All';
-
-  bool get _isArabic => widget.languageCode == 'ar';
-
-  @override
-  void initState() {
-    super.initState();
-    _projects = _repository.getPublishedProjects();
-  }
-
-  void _retry() {
-    setState(() {
-      _projects = _repository.getPublishedProjects();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 1440),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 96),
-      child: FutureBuilder<List<PortfolioProject>>(
-        future: _projects,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox(
-              height: 360,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-          if (snapshot.hasError) {
-            return _ErrorState(onRetry: _retry, isArabic: _isArabic);
-          }
-
-          final projects = snapshot.data ?? const [];
+      child: projectsAsync.when(
+        loading: () => const SizedBox(
+          height: 360,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (error, stack) => _ErrorState(
+          onRetry: () => ref.invalidate(publishedProjectsProvider),
+          isArabic: isArabic,
+        ),
+        data: (projects) {
           final categories = <String>{
             'All',
             ...projects.map((project) => project.category),
           }.toList();
-          if (!categories.contains(_selectedCategory)) {
-            _selectedCategory = 'All';
-          }
-          final filtered = _selectedCategory == 'All'
+          final effectiveCategory = categories.contains(selectedCategory)
+              ? selectedCategory
+              : 'All';
+          final filtered = effectiveCategory == 'All'
               ? projects
               : projects
-                    .where((project) => project.category == _selectedCategory)
+                    .where(
+                      (project) => project.category == effectiveCategory,
+                    )
                     .toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _SectionHeading(isArabic: _isArabic),
+              _SectionHeading(isArabic: isArabic),
               const SizedBox(height: 36),
               _CategoryFilter(
                 categories: categories,
-                selected: _selectedCategory,
-                isArabic: _isArabic,
-                onSelected: (value) {
-                  setState(() => _selectedCategory = value);
-                },
+                selected: effectiveCategory,
+                isArabic: isArabic,
+                onSelected: (value) => ref
+                    .read(selectedProjectCategoryProvider.notifier)
+                    .select(value),
               ),
               const SizedBox(height: 32),
               if (filtered.isEmpty)
-                _EmptyState(isArabic: _isArabic)
+                _EmptyState(isArabic: isArabic)
               else
                 LayoutBuilder(
                   builder: (context, constraints) {
@@ -100,12 +79,13 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                             width: itemWidth,
                             child: _ProjectCard(
                               project: filtered[index],
-                              isArabic: _isArabic,
+                              isArabic: isArabic,
                               prominent:
                                   filtered[index].featured &&
                                   columns > 1 &&
                                   index == 0,
-                              onOpen: () => _openProject(filtered[index]),
+                              onOpen: () =>
+                                  _openProject(context, filtered[index], isArabic),
                             ),
                           ),
                       ],
@@ -119,12 +99,16 @@ class _ProjectsSectionState extends State<ProjectsSection> {
     );
   }
 
-  void _openProject(PortfolioProject project) {
+  void _openProject(
+    BuildContext context,
+    PortfolioProject project,
+    bool isArabic,
+  ) {
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.86),
       builder: (_) =>
-          ProjectDetailsDialog(project: project, isArabic: _isArabic),
+          ProjectDetailsDialog(project: project, isArabic: isArabic),
     );
   }
 }
@@ -358,6 +342,8 @@ class _ProjectCardState extends State<_ProjectCard> {
                         Image.network(
                           cover.url,
                           fit: BoxFit.cover,
+                          cacheWidth: 640,
+                          filterQuality: FilterQuality.medium,
                           errorBuilder: (_, _, _) =>
                               const _ProjectPlaceholder(),
                         )

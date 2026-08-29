@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/locale_provider.dart';
 import '../theme/portfolio_theme.dart';
 import '../utils/app_localizations.dart';
 import 'common/section_heading.dart';
 
-class AboutSection extends StatelessWidget {
-  const AboutSection({super.key, required this.languageCode});
-
-  final String languageCode;
+class AboutSection extends ConsumerWidget {
+  const AboutSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final languageCode = ref.watch(localeProvider);
     final localizations = AppLocalizations(languageCode);
     final isArabic = languageCode == 'ar';
     final width = MediaQuery.sizeOf(context).width;

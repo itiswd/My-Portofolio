@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/supabase_config.dart';
+import 'providers/locale_provider.dart';
 import 'screens/admin/admin_gate.dart';
 import 'screens/home_screen.dart';
 import 'theme/portfolio_theme.dart';
@@ -8,28 +10,16 @@ import 'theme/portfolio_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SupabaseConfig.initialize();
-  runApp(const PortfolioApp());
+  runApp(const ProviderScope(child: PortfolioApp()));
 }
 
-class PortfolioApp extends StatefulWidget {
+class PortfolioApp extends ConsumerWidget {
   const PortfolioApp({super.key});
 
   @override
-  State<PortfolioApp> createState() => _PortfolioAppState();
-}
-
-class _PortfolioAppState extends State<PortfolioApp> {
-  String _languageCode = 'en';
-
-  void _toggleLanguage() {
-    setState(() {
-      _languageCode = _languageCode == 'en' ? 'ar' : 'en';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isArabic = _languageCode == 'ar';
+  Widget build(BuildContext context, WidgetRef ref) {
+    final languageCode = ref.watch(localeProvider);
+    final isArabic = languageCode == 'ar';
     return MaterialApp(
       title: isArabic
           ? 'إبراهيم ثروت - مطور فلاتر'
@@ -44,10 +34,7 @@ class _PortfolioAppState extends State<PortfolioApp> {
           );
         }
         return MaterialPageRoute<void>(
-          builder: (_) => HomeScreen(
-            languageCode: _languageCode,
-            onLanguageToggle: _toggleLanguage,
-          ),
+          builder: (_) => const HomeScreen(),
           settings: settings,
         );
       },
